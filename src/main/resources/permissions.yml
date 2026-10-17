@@ -1,0 +1,3 @@
+permissions:
+  customsounds.use:
+    default: op

@@ -1,5 +1,10 @@
 name: CustomSounds
-version: '0.1'
+version: '0.1.2'
 main: me.ybbbno.customsounds.CustomSounds
 api-version: '1.21'
-authors: [ Ybbb ]
+authors: [ ybbbno ]
+dependencies:
+  server:
+    voicechat:
+      load: BEFORE
+      required: true

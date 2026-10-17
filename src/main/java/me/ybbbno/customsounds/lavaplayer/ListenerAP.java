@@ -10,17 +10,22 @@ import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 import de.maxhenkel.voicechat.api.audiochannel.AudioChannel;
 import de.maxhenkel.voicechat.api.audiochannel.LocationalAudioChannel;
 import me.deadybbb.ybmj.PluginProvider;
+import me.ybbbno.customsounds.lavaplayer.types.ContainerAP;
+import org.bukkit.World;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-public class APListener extends AudioEventAdapter {
+public class ListenerAP extends AudioEventAdapter {
     private final PluginProvider plugin;
     private final AudioChannel channel;
+    private final String name;
 
-    public APListener(PluginProvider plugin, AudioChannel channel) {
+
+    public ListenerAP(PluginProvider plugin, AudioChannel channel, String name) {
         this.plugin = plugin;
         this.channel = channel;
+        this.name = name;
     }
 
     @Override
@@ -30,6 +35,7 @@ public class APListener extends AudioEventAdapter {
             try {
                 while(!channel.isClosed() && player.getPlayingTrack() != null && !Thread.currentThread().isInterrupted()) {
                     if (track.getState() == AudioTrackState.FINISHED) break;
+                    if (channel instanceof LocationalAudioChannel loc) loc.getLocation();
 
                     AudioFrame frame;
                     if (Objects.isNull(frame = player.provide(5L, TimeUnit.MILLISECONDS))) continue;
@@ -43,10 +49,10 @@ public class APListener extends AudioEventAdapter {
                     };
                 }
             } catch (InterruptedException e) {
-                plugin.logger.warning("Track "+track.getIdentifier()+" got InterruptedException its stop most likely");
+                plugin.logger.warning("Track "+track.getIdentifier()+" in player "+name+" got InterruptedException its stop most likely");
                 Thread.currentThread().interrupt();
             } catch (Throwable e) {
-                plugin.logger.severe("Track "+track.getIdentifier()+" got Throwable Exception: "+ e.getMessage());
+                plugin.logger.severe("Track "+track.getIdentifier()+" in player "+name+" got Throwable Exception: "+ e.getMessage());
             }
         }).start();
     }
