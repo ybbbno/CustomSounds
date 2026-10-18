@@ -263,7 +263,6 @@ public class CustomSoundsCommand implements BasicCommand {
         }
 
         if (args.length >= 4) {
-            // Coordinates
             if (executionLocation == null && (args[1].startsWith("~") || args[2].startsWith("~") || args[3].startsWith("~"))) {
                 LegacyTextHandler.sendFormattedMessage(sender, "<red>Относительные координаты (~) нельзя использовать из консоли. Укажите абсолютные.");
                 return;
@@ -274,9 +273,18 @@ public class CustomSoundsCommand implements BasicCommand {
                 double y = Math.floor(parseCoordinate(args[2], executionLocation != null ? executionLocation.getY() : 0));
                 double z = Math.floor(parseCoordinate(args[3], executionLocation != null ? executionLocation.getZ() : 0));
 
-                World world = executionLocation != null
-                        ? executionLocation.getWorld()
-                        : Bukkit.getWorlds().get(0);
+                World world;
+                if (args.length >= 5) {
+                    world = Bukkit.getWorld(args[4]);
+                    if (world == null) {
+                        LegacyTextHandler.sendFormattedMessage(sender, "<red>Мир не найден: " + args[4]);
+                        return;
+                    }
+                } else {
+                    world = executionLocation != null
+                            ? executionLocation.getWorld()
+                            : Bukkit.getWorlds().getFirst();
+                }
 
                 Location location = new Location(world, x, y, z);
                 voicechatManager.stopByLocation(location);
@@ -285,7 +293,6 @@ public class CustomSoundsCommand implements BasicCommand {
                 LegacyTextHandler.sendFormattedMessage(sender, "<red>Неверный формат координат.");
             }
         } else {
-            // Name
             String name = args[1];
             voicechatManager.stopByName(name);
             LegacyTextHandler.sendFormattedMessage(sender, "<green>Звук '" + name + "' остановлен.");
@@ -391,14 +398,14 @@ public class CustomSoundsCommand implements BasicCommand {
     }
 
     private Collection<String> suggestStopSound(String[] args) {
-        if (args.length == 2) {
-            return List.of("all", "<x>");  // Улучшено
-        } else if (args.length == 3) {
-            return List.of("<y>");
-        } else if (args.length == 4) {
-            return List.of("<z>");
-        }
-        return List.of();
+        return switch (args.length) {
+            case 2 -> List.of("all", "~", "~0", "~1", "~10");
+            case 3, 4 -> List.of("~", "~0", "~1", "~10");
+            case 5 -> Bukkit.getWorlds().stream()
+                    .map(World::getName)
+                    .collect(Collectors.toList());
+            default -> List.of();
+        };
     }
 
     @Override

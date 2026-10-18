@@ -65,21 +65,23 @@ Plays a sound attached to a player (entity audio channel). The sound follows the
 /customsounds playentity footsteps.mp3 Steve 16 80
 ```
 
-### `/customsounds stopsound <name|all|<x> <y> <z>>`
+### `/customsounds stopsound <name|all|<x> <y> <z> [world]>`
 
 Stops currently playing sounds.
 
-| Argument     | Description                              |
-|--------------|------------------------------------------|
-| `all`        | Stop every sound                         |
-| `<name>`     | Stop sound by internal name              |
-| `<x> <y> <z>`| Stop locational sound at coordinates     |
+| Argument      | Description                                              |
+|---------------|----------------------------------------------------------|
+| `all`         | Stop every sound                                         |
+| `<name>`      | Stop sound by internal name                              |
+| `<x> <y> <z>` | Stop locational sound at coordinates (supports `~`)      |
+| `world`       | Optional world name (for coordinate form)                |
 
 **Examples:**
 ```
 /customsounds stopsound all
 /customsounds stopsound static-Notch
 /customsounds stopsound ~ ~ ~
+/customsounds stopsound 100 64 -200 world
 ```
 
 ## Permissions
